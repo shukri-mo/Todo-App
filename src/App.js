@@ -1,25 +1,81 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from'react';
+import "./App.css"
+const listItems = [{
+  id: 1,
+  task: 'Learn to code',
+  completed: false,
+},{
+id:2,
+task: 'Read a book',
+completed: true,
+},
+{
+  id: 3,
+  task: 'Complete online courses',
+  completed: false,
+}
 
+]
 function App() {
+  const [tasks, setTasks] = useState(listItems);
+  const [taskInput, setTaskInput] = useState('');
+function updateTask(id){
+  setTasks((tasks)=>tasks.map((task)=>task.id===id? {...task, completed:!task.completed}:task));
+}
+const completedTasks = tasks.filter((task)=>task.completed);
+  function addTask(){
+    const newTask={
+      id: Date.now(),
+      task: taskInput,
+      completed: false
+    }
+    if(taskInput.trim() === '') return
+    setTasks((task)=> [...task, newTask]);
+    setTaskInput('');
+  }
+function deleted(id){
+setTasks((prev)=>prev.filter((task)=>task.id!==id));
+}
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="min-h-screen flex  items-center justify-center bg-gradient-to-r from-red-600 to-blue-400">
+    <div className='bg-white shadow-lg rounded-3xl p-16'>
+     <h1 className="text-3xl font-bold text-center text-gray-900 mb-6">My Todo List </h1>
+     <TaskInput taskInput={taskInput} setTaskInput={setTaskInput} addTask={addTask}/>
+<TaskList tasks={tasks} deleted={deleted} update={updateTask}/>
+{completedTasks.length>0?<span className=" font-bold text-center text-gray-800 mb-6">Hanbalyo you have done  ({completedTasks.length} tasks)</span>:<span className=" font-bold text-center text-gray-900 mb-6">Let us see what you have done</span>}
+    </div>
     </div>
   );
 }
+//Task input
+function TaskInput({taskInput, setTaskInput,addTask}){
+  return(
+    <div className="mb-4 flex" >
 
+{addTask&&<input type="text" className='flex-grow px-3 py-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500' placeholder='Add a new todo' value={taskInput} onChange={(e)=>setTaskInput(e.target.value)}/>}
+<button onClick={addTask} className='bg-blue-500 text-white px-4 py-2 rounded-r-lg hover:bg-blue-600'>Add</button>
+    </div>
+
+  )
+}
+function TaskList({tasks,deleted,update}){
+  return(
+  <div>
+<ul className='space-y-2'>{tasks.map((item)=><Item key={item.id} item={item}  deleted={deleted} update={update}/>)}</ul>
+  </div>
+  )
+}
+function Item({item,deleted,update}){
+return(
+  <div >
+  <li className='flex items-center p-3 rounded-lg bg-slate-100 border border-gray-200 even:bg-slate-700' >
+  <input type="checkbox" checked={item.completed} onChange={()=>update(item.id)} className='mr-2 h-5 w-5 text-blue-600'/>
+  <span className={`flex-grow ${item.completed?"line-through text-gray-500":"text-gray-800"}`}>{item.task}</span>
+  <button className="ml-80 border-none p-2 rounded-lg bg-red-500 text-white hover:bg-red-600" onClick={() => deleted(item.id)}>delete</button>
+  {/* <button  style={{backgroundColor:"green"}}>update</button> */}
+  </li>
+  </div>
+)
+}
 export default App;
