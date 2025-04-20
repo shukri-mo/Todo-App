@@ -105,7 +105,6 @@ return(
     Delete
   </button>
 
-//look at this and do your best 
  
 </li>
 
