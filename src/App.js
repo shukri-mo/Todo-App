@@ -1,4 +1,6 @@
-import React, { useEffect, useState } from'react';
+import React, {useEffect, useState } from'react';
+import { Moon, Sun } from 'lucide-react';
+
 import "./App.css"
 const listItems = [{
   id: 1,
@@ -21,12 +23,34 @@ function App() {
   const savedTasks = localStorage.getItem('tasks');
   return savedTasks ? JSON.parse(savedTasks) : listItems;
 });
-
+const [darkMode,setDarkMode]=useState(false)
   const [taskInput, setTaskInput] = useState('');
   useEffect(()=>{
     localStorage.setItem('tasks',JSON.stringify(tasks))
   },[tasks])
   
+  useEffect(()=>{
+  const savedTheme=localStorage.getItem('theme');
+  if(savedTheme==='dark'){
+    setDarkMode(true)
+    document.documentElement.classList.add('dark')
+  }
+  },[])
+  const toggleTheme=()=>{
+  setDarkMode(!darkMode)
+    if(!darkMode){
+      document.documentElement.classList.add('dark')
+      setDarkMode(true)
+      localStorage.setItem('theme','dark')
+      console.log("darkmode enabled")
+  }
+  else{
+    document.documentElement.classList.remove('dark')
+      localStorage.setItem('theme','light')
+console.log("lightmode enabled")
+      setDarkMode(false)
+  }
+}
 function updateTask(id){
   setTasks((tasks)=>tasks.map((task)=>task.id===id? {...task, completed:!task.completed}:task));
   console.log(tasks)
@@ -50,8 +74,14 @@ setTasks((prev)=>prev.filter((task)=>task.id!==id));
 }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-r from-red-600 to-blue-400">
-    <div className='bg-white shadow-lg rounded-3xl p-6 sm:p-10 w-full max-w-xl'>
+     <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-r from-red-600 to-blue-400">
+    <div className='absolute top-4 right-4 flex space-x-4'>
+      <button onClick={toggleTheme}>
+        {darkMode ? <Sun className='w-6 h-6 text-yellow-400'/> : <Moon className='w-6 h-6 text-gray-800'/>}
+      </button>
+     
+    </div>
+    <div className='bg-white shadow-lg rounded-3xl p-6 sm:p-10 w-full max-w-xl dark:bg-gray-800 dark:text-white'>
       <h1 className="text-2xl sm:text-3xl font-bold text-center text-gray-900 mb-6">My Todo List</h1>
       <TaskInput taskInput={taskInput} setTaskInput={setTaskInput} addTask={addTask} />
       <TaskList tasks={tasks} deleted={deleted} update={updateTask} />
@@ -61,6 +91,7 @@ setTasks((prev)=>prev.filter((task)=>task.id!==id));
         ) : (
           <span className="font-bold text-gray-900">Let us see what you have done</span>
         )}
+     
       </div>
     </div>
   </div>
@@ -117,9 +148,9 @@ return(
     Delete
   </button>
 
- 
 </li>
 
 )
 }
+
 export default App;
