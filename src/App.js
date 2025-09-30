@@ -42,12 +42,12 @@ const [darkMode,setDarkMode]=useState(false)
       document.documentElement.classList.add('dark')
       setDarkMode(true)
       localStorage.setItem('theme','dark')
-      console.log("darkmode enabled")
+  
   }
   else{
     document.documentElement.classList.remove('dark')
       localStorage.setItem('theme','light')
-console.log("lightmode enabled")
+
       setDarkMode(false)
   }
 }
