@@ -1,4 +1,4 @@
-import React, { useState } from'react';
+import React, { useEffect, useState } from'react';
 import "./App.css"
 const listItems = [{
   id: 1,
@@ -17,12 +17,24 @@ completed: true,
 
 ]
 function App() {
-  const [tasks, setTasks] = useState(listItems);
+  const [tasks, setTasks] = useState(() => {
+  const savedTasks = localStorage.getItem('tasks');
+  return savedTasks ? JSON.parse(savedTasks) : listItems;
+});
+
   const [taskInput, setTaskInput] = useState('');
+  useEffect(()=>{
+    localStorage.setItem('tasks',JSON.stringify(tasks))
+  },[tasks])
+  
 function updateTask(id){
   setTasks((tasks)=>tasks.map((task)=>task.id===id? {...task, completed:!task.completed}:task));
+  console.log(tasks)
 }
-const completedTasks = tasks.filter((task)=>task.completed);
+if(!tasks){
+  return
+}
+ const completedTasks = tasks.filter((task)=>task.completed);
   function addTask(){
     const newTask={
       id: Date.now(),
